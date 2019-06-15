@@ -5,8 +5,8 @@
 % Data da última edição: 12/06/2019 - 22:00
 
 % Autores:  Gustavo Gransotto Ribeiro       9300557
-%           Pedro Emanuel Rodrigues Castro  9
-%           Pedro Nunes Tadeu Rodrigues     9
+%           Pedro Emanuel Rodrigues Castro  98
+%           Pedro Nunes Tadeu Rodrigues     90
 
 
 % Limpa variáveis anteriores
