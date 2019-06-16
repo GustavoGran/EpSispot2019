@@ -1,8 +1,8 @@
 
 % Exercício Programa - Introdução a Sistemas Elétricos de Potência
 
-% Versão : 19.06.12.0
-% Data da última edição: 12/06/2019 - 22:00
+% Versão : 19.06.16.0
+% Data da última edição: 16/06/2019 - 22:00
 
 % Autores:  Gustavo Gransotto Ribeiro       9300557
 %           Pedro Emanuel Rodrigues Castro  98
@@ -17,15 +17,20 @@ clc;
 tic();
 
 % Definição de variáveis
-
+global Vnom;
+global Vth;
+global Zth;
+global Ith
+global Yth;
+global Rmax;
 % Tensão nominal de linha
-global Vnom = 13800;
+Vnom = 13800;
 % Fonte de tensao do equivalente de Thevenin do no da subestacao
-global Vth = Vnom / sqrt (3) ;
-global Zth = (Vth^2) /(((1/3)*10E8 ) *( cos (80*pi/180) - 1i* sin (80*pi/180) )); % Impedancia equivalente do Thevenin do no da subestacao
-global Ith = Vth / Zth ; % Fonte de corrente do equivalente de Norton do no da subestacao
-global Yth = 1 / Zth ; % Admitancia do equivalente de Norton do no da subestacao
-global Rmax = 10; % Valor maximo da resistencia de falta
+Vth = Vnom / sqrt (3) ;
+Zth = (Vth^2) /(((1/3)*10E8 ) *( cos (80*pi/180) - 1i* sin (80*pi/180) )); % Impedancia equivalente do Thevenin do no da subestacao
+Ith = Vth / Zth ; % Fonte de corrente do equivalente de Norton do no da subestacao
+Yth = 1 / Zth ; % Admitancia do equivalente de Norton do no da subestacao
+Rmax = 10; % Valor maximo da resistencia de falta
 
 
 
@@ -87,11 +92,21 @@ tamanhoCAR = size(cargas,1);
 Zcarga = zeros(tamanhoCAR+1,2);
 for i = 1 : tamanhoCAR
     Zcarga(i,1) = cargas(i,1);
-    Zcarga(i,2) = (Vnom^2) /(1000*(cargas (i ,2) - 1i*cargas(i ,2).*tan ( acos ( cargas (i,3) ) ) ) ) ;
+endfor
+Zcarga(tamanhoCAR+1,1) = 1000;
+
+Zcarga = sort(Zcarga);
+
+for i = 1 : tamanhoCAR
+    for j = 1 : tamanhoCAR
+      if (Zcarga(i,1) == cargas(j,1))
+        Zcarga(i,2) = (Vnom^2) /(1000*(cargas (j ,2) - 1i*cargas(j ,2).*tan ( acos ( cargas (j,3) ) ) ) ) ;
+      endif
+    endfor
 endfor
 
 % Último espaço do vetor é reservado para a impedância da carga
-Zcarga(tamanhoCAR+1,1) = 1000;
+
 
 % Cria um vetor com todos os nós distintos do problema
 nosDistintos(1) = topologiaBackup(1,1);
@@ -123,6 +138,7 @@ numDeNosDistintos = size(nosDistintos,2);
 nosDistintos(numDeNosDistintos+1) = 1000;
 nosDistintos = sort(nosDistintos);
 
+
 % Cria matriz de incidências com o tamanho da matriz de Nós distintos + 1 (Nó da falta)
 % Uma forma rápida de checar se essa matriz está certa é somar todos os seus elementos. Deve ser 2*numDeLinhas da matriz topologia
 
@@ -151,8 +167,8 @@ for i = 1 : tamanhoTOP
 endfor
 
 Matriz_Incidencias_Backup = Matriz_Incidencias;
-##Transp_Mtz_Inc = transpose(Matriz_Incidencias);
-##Transp_Mtz_Inc_Backup = Transp_Mtz_Inc;
+%%Transp_Mtz_Inc = transpose(Matriz_Incidencias);
+%%Transp_Mtz_Inc_Backup = Transp_Mtz_Inc;
 
 
 
@@ -198,34 +214,34 @@ for casoSimulacao = 1 : 10%5
                     if ( ZtopMed(trechoDaFalta,1) == nosDistintos(j) )
 
                         Matriz_Incidencias(trechoDaFalta,j) = 1; % Corrente no ramo da falta sai do nó j
-##                        Transp_Mtz_Inc(j,trechoDaFalta) = 1;
+%%                        Transp_Mtz_Inc(j,trechoDaFalta) = 1;
 
                     elseif ( ZtopMed(trechoDaFalta,2) == nosDistintos(j) )
 
                         Matriz_Incidencias(trechoDaFalta,j) = -1; % Corrente no ramo da falta entra no nó j
-##                        Transp_Mtz_Inc(j,trechoDaFalta) = -1;
+%%                        Transp_Mtz_Inc(j,trechoDaFalta) = -1;
 
                     else
 
                         Matriz_Incidencias(trechoDaFalta,j) = 0; % Ramo da falta não está conectado ao nó j
-##                        Transp_Mtz_Inc(j,trechoDaFalta) = 0;
+%%                        Transp_Mtz_Inc(j,trechoDaFalta) = 0;
 
                     endif
 
                     if ( ZtopMed(tamanhoTOP+1, 1) == nosDistintos(j) )
 
                         Matriz_Incidencias(tamanhoTOP+1,j) = 1; % Corrente no ramo da falta sai do nó j
-##                        Transp_Mtz_Inc(j,tamanhoTOP+1) = 1;
+%%                        Transp_Mtz_Inc(j,tamanhoTOP+1) = 1;
 
                     elseif ( ZtopMed(tamanhoTOP+1, 2) == nosDistintos(j) )
 
                         Matriz_Incidencias(tamanhoTOP+1, j) = -1; % Corrente no ramo da falta entra no nó j
-##                        Transp_Mtz_Inc(j,tamanhoTOP+1) = -1;
+%%                        Transp_Mtz_Inc(j,tamanhoTOP+1) = -1;
 
                     else
 
                         Matriz_Incidencias(tamanhoTOP+1,j) = 0; % Ramo da falta não está conectado ao nó j
-##                        Transp_Mtz_Inc(j,tamanhoTOP+1) = 0;
+%%                        Transp_Mtz_Inc(j,tamanhoTOP+1) = 0;
 
                     endif
             endfor
@@ -233,24 +249,19 @@ for casoSimulacao = 1 : 10%5
 
             % Cria a matriz de admitâncias nodais inserindo as admitâncias da linha
             Ynos = transpose(Matriz_Incidencias) * Ypr * Matriz_Incidencias;
-##            Ynos = Transp_Mtz_Inc * Ypr * Matriz_Incidencias;
+%%            Ynos = Transp_Mtz_Inc * Ypr * Matriz_Incidencias;
             Ynos(1,1) = Ynos(1,1) + Yth; % Insere a admitância equivalente de Thevenin
             YnosBackup = Ynos;
 
+            for i = 1 : numDeNosDistintos-1
+                Ynos(i+1,i+1) = Ynos(i+1,i+1) + ( 1 / Zcarga(i,2) );
+            endfor
+
             for resistenciaDaFalta = 0.1 : 0.1 : Rmax  % [ohms]
-                Ynos = YnosBackup;
+
                 Zcarga(tamanhoCAR+1,2) = resistenciaDaFalta;
 
-                for i = 1 : numDeNosDistintos+1
-
-                    for j = 1 : tamanhoCAR+1
-
-                        if (Zcarga(j,1) == nosDistintos(i))
-                            Ynos(i,i) = Ynos(i,i) + ( 1 / Zcarga(j,2) );
-                        endif
-                    endfor
-
-                endfor
+                Ynos(numDeNosDistintos+1, numDeNosDistintos+1) = YnosBackup(numDeNosDistintos+1, numDeNosDistintos+1) + ( 1 / Zcarga(tamanhoCAR+1,2) );
 
                 % Calcula a tensão nos nós a partir da matriz de admitâncias e da corrente de thevenin calculada
 
@@ -290,7 +301,7 @@ for casoSimulacao = 1 : 10%5
 
         Ypr(trechoDaFalta, : ) = YprBackup(trechoDaFalta, : );
         Matriz_Incidencias(trechoDaFalta, : ) = Matriz_Incidencias_Backup (trechoDaFalta, : );
-##        Transp_Mtz_Inc( : , trechoDaFalta ) = Transp_Mtz_Inc_Backup ( : , trechoDaFalta );
+%%        Transp_Mtz_Inc( : , trechoDaFalta ) = Transp_Mtz_Inc_Backup ( : , trechoDaFalta );
 
     endfor % trechoDaFalta = 1 : size(topologiaBackup,1)
 
