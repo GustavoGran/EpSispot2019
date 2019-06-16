@@ -1,8 +1,8 @@
 
 % Exercício Programa - Introdução a Sistemas Elétricos de Potência
 
-% Versão : 19.06.16.0
-% Data da última edição: 16/06/2019 - 22:00
+% Versão : 19.06.16.1
+% Data da última edição: 16/06/2019 - 11:00
 
 % Autores:  Gustavo Gransotto Ribeiro       9300557
 %           Pedro Emanuel Rodrigues Castro  98
@@ -23,6 +23,7 @@ global Zth;
 global Ith
 global Yth;
 global Rmax;
+global elapsed_time;
 % Tensão nominal de linha
 Vnom = 13800;
 % Fonte de tensao do equivalente de Thevenin do no da subestacao
@@ -38,14 +39,14 @@ Rmax = 10; % Valor maximo da resistencia de falta
 % Carrega os arquivos do enunciado
 
 % Arquivo com a matriz 'cargas' = <no onde a carga esta conectada >< potencia [kW] da carga >< fator de potencia ( indutivo )>
-CAR000;
+CAR039;
 
 
 % Arquivo com a matriz 'topologia' = <no pai ><no filho >< comprimento [m]>< resistencia do trecho [ ohms /m]>< reatancia do trecho [ ohms /m]>
-TOP000;
+TOP039;
 
 % Arquivo com a matriz 'Emedido' = <numero do evento de curto - circuito >< parte real da tensao [V]>< parte imaginaria da tensao [V]>
-VOL000;
+VOL039;
 
 
 fprintf('Caso , Nó 1 , Nó 2, Dist , Res , Funcao\n');
@@ -167,18 +168,11 @@ for i = 1 : tamanhoTOP
 endfor
 
 Matriz_Incidencias_Backup = Matriz_Incidencias;
-%%Transp_Mtz_Inc = transpose(Matriz_Incidencias);
-%%Transp_Mtz_Inc_Backup = Transp_Mtz_Inc;
-
-
-
-
-
 
 Inos = zeros( numDeNosDistintos+1 , 1 );
 Inos(1,1) = Ith;
 
-for casoSimulacao = 1 : 10%5
+for casoSimulacao = 1 : 5
     funcaoLocaliz = Inf;
     distFaltaLocaliz = 0;
     ResFaltaLocaliz = 0;
@@ -214,34 +208,31 @@ for casoSimulacao = 1 : 10%5
                     if ( ZtopMed(trechoDaFalta,1) == nosDistintos(j) )
 
                         Matriz_Incidencias(trechoDaFalta,j) = 1; % Corrente no ramo da falta sai do nó j
-%%                        Transp_Mtz_Inc(j,trechoDaFalta) = 1;
 
                     elseif ( ZtopMed(trechoDaFalta,2) == nosDistintos(j) )
 
                         Matriz_Incidencias(trechoDaFalta,j) = -1; % Corrente no ramo da falta entra no nó j
-%%                        Transp_Mtz_Inc(j,trechoDaFalta) = -1;
 
                     else
 
                         Matriz_Incidencias(trechoDaFalta,j) = 0; % Ramo da falta não está conectado ao nó j
-%%                        Transp_Mtz_Inc(j,trechoDaFalta) = 0;
 
                     endif
 
                     if ( ZtopMed(tamanhoTOP+1, 1) == nosDistintos(j) )
 
                         Matriz_Incidencias(tamanhoTOP+1,j) = 1; % Corrente no ramo da falta sai do nó j
-%%                        Transp_Mtz_Inc(j,tamanhoTOP+1) = 1;
+
 
                     elseif ( ZtopMed(tamanhoTOP+1, 2) == nosDistintos(j) )
 
                         Matriz_Incidencias(tamanhoTOP+1, j) = -1; % Corrente no ramo da falta entra no nó j
-%%                        Transp_Mtz_Inc(j,tamanhoTOP+1) = -1;
+
 
                     else
 
                         Matriz_Incidencias(tamanhoTOP+1,j) = 0; % Ramo da falta não está conectado ao nó j
-%%                        Transp_Mtz_Inc(j,tamanhoTOP+1) = 0;
+
 
                     endif
             endfor
@@ -249,7 +240,7 @@ for casoSimulacao = 1 : 10%5
 
             % Cria a matriz de admitâncias nodais inserindo as admitâncias da linha
             Ynos = transpose(Matriz_Incidencias) * Ypr * Matriz_Incidencias;
-%%            Ynos = Transp_Mtz_Inc * Ypr * Matriz_Incidencias;
+
             Ynos(1,1) = Ynos(1,1) + Yth; % Insere a admitância equivalente de Thevenin
             YnosBackup = Ynos;
 
@@ -312,7 +303,8 @@ for casoSimulacao = 1 : 10%5
 endfor % casoSimulacao = 1 : 1 % 5
 
 
-global elapsed_time = toc();
+
+elapsed_time = toc();
 minutos = fix(elapsed_time/60);
 horas = fix(minutos/60);
 dias = fix(horas/24);
