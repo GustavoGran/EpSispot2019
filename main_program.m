@@ -1,12 +1,12 @@
 
 % Exercício Programa - Introdução a Sistemas Elétricos de Potência
 
-% Versão : 19.06.18.0
-% Data da última edição: 18/06/2019 - 24:00
+% Versão : 19.06.22.0
+% Data da última edição: 18/06/2019 - 22:30
 
 % Autores:  Gustavo Gransotto Ribeiro       9300557
-%           Pedro Emanuel Rodrigues Castro  98
-%           Pedro Nunes Tadeu Rodrigues     90
+%           Pedro Emanuel Rodrigues Castro  9838007
+%           Pedro Nunes Tadeu Rodrigues     9042661
 
 
 % Limpa variáveis anteriores
